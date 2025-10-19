@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Дневник Онлайн</title>
+  <style>
+    /* --- Reset --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0d1117;
+      color: #c9d1d9;
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #58a6ff;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #161b22;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(88, 166, 255, 0.2);
+      animation: fadeIn 1s ease;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 1rem;
+      background-color: #0d1117;
+      border: 1px solid #30363d;
+      color: #c9d1d9;
+      border-radius: 6px;
+      resize: none;
+      margin-bottom: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #58a6ff;
+    }
+
+    button {
+      padding: 0.75rem 1.5rem;
+      background-color: #238636;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background-color: #2ea043;
+      transform: scale(1.05);
+    }
+
+    ul {
+      list-style: none;
+      margin-top: 2rem;
+    }
+
+    li {
+      background-color: #21262d;
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideIn 0.5s forwards;
+    }
+
+    @keyframes slideIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .timestamp {
+      font-size: 0.8rem;
+      color: #8b949e;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>📘 Онлайн Дневник</h1>
+  <div class="container">
+    <textarea id="entry" placeholder="Напиши здесь свою мысль..."></textarea>
+    <button onclick="addEntry()">Добавить запись</button>
+    <ul id="entries"></ul>
+  </div>
+
+  <script>
+    const entryInput = document.getElementById("entry");
+    const entriesList = document.getElementById("entries");
+
+    // Загружаем записи из LocalStorage
+    window.onload = function() {
+      const saved = JSON.parse(localStorage.getItem("diaryEntries")) || [];
+      saved.forEach(entry => {
+        createEntryElement(entry.text, entry.date);
+      });
+    };
+
+    function addEntry() {
+      const text = entryInput.value.trim();
+      if (!text) return;
+
+      const now = new Date();
+      const date = now.toLocaleString("ru-RU");
+
+      createEntryElement(text, date);
+
+      // Сохраняем в LocalStorage
+      const saved = JSON.parse(localStorage.getItem("diaryEntries")) || [];
+      saved.push({ text, date });
+      localStorage.setItem("diaryEntries", JSON.stringify(saved));
+
+      entryInput.value = "";
+    }
+
+    function createEntryElement(text, date) {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div>${text}</div>
+        <div class="timestamp">🕒 ${date}</div>
+      `;
+      entriesList.insertBefore(li, entriesList.firstChild);
+    }
+  </script>
+</body>
+</html>
